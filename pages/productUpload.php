@@ -90,6 +90,9 @@
 					<a href="login.php">Log In</a>
 				</li>
 				<li>
+					<a href="profile.php">My Profile</a>
+				</li>
+				<li>
 					<a href="logout.php">Log Out</a>
 				</li>
 			</ul>
@@ -104,13 +107,6 @@
 <div class="container">
 
 	<div class="row">
-		<div class="col-lg-12 text-center">
-			<h1>Staff Access Only</h1>
-		</div>
-	</div>
-	<!-- /.row -->
-
-	<div class="row">
 
 		<!-- Form to upload a new product to the database -->
 		<!-- The form is split in to two sections, product information and tags, this is so the form can be displayed
@@ -119,8 +115,8 @@
 			 on a desktop, this is a secondary issue -->
 		<!-- The id attribute of the form tag is needed for a textarea.  By having an id, the textarea can be placed
 			 anywhere on the web page but still be associated with the form even though it is outside of the form tags -->
-		<form action="" method="post" id="productUpload" enctype="multipart/form-data">
-			<div class="col-lg-4">
+		<form action="productPhotoUpload.php" method="post" id="productUpload" enctype="multipart/form-data">
+			<div class="col-lg-6">
 				<h3>Product Information</h3>
 				<label for="make">Make<br>
 					<input id="make" name="make" type="text">
@@ -159,7 +155,7 @@
 				 	 this will make it easier to locate files in the future, while also keeping each folder to a minimum
 				 	 amount of files, instead of having one folder for all photos -->
 			</div>
-			<div class="col-lg-4">
+			<div class="col-lg-6">
 				<h3>Tags</h3>
 				<input id="whiteGoods" name="tags[]" type="checkbox" value="White Goods"> <label for="whiteGoods">White Goods</label><br>
 
@@ -182,184 +178,13 @@
 				<input id="rideOnMower" name="tags[]" type="checkbox" value="Ride On Mower"> <label for="rideOnMower">Ride On Mower</label><br>
 				<input id="strimmer" name="tags[]" type="checkbox" value="Strimmer"> <label for="strimmer">Strimmer</label><br>
 			</div>
-			<div class="col-lg-4">
-				<h3>Photo Photo Information</h3>
-				<h4>Photo To Upload</h4>
-				<input type="hidden" name="MAX_FILE_SIZE" value="2000000">
-				<input name="userfile" type="file" id="userfile">
-				<h4>File Name</h4>
-				<label for="productPhotoName">
-					<input id="productPhotoName" name="productPhotoName" type="text">
-				</label><br>
-				<h4>Directory To Upload To</h4>
-				<label for="folderName">Folder Name<br>
-					<select id="folderName" name="folderName">
-						<option value="chestFreezer">Chest Freezer</option>
-						<option value="cooker">Cooker</option>
-						<option value="dishwasher">Dishwasher</option>
-						<option value="freezer">Freezer</option>
-						<option value="fridgeFreezer">Fridge Freezer</option>
-						<option value="fridge">Fridge</option>
-						<option value="microwave">Microwave</option>
-						<option value="washingMachine">Washing Machine</option>
-						<option value="cultivator">Cultivator</option>
-						<option value="elctricTool">Electric Tool</option>
-						<option value="hedgeTrimmer">Hedge Trimmer</option>
-						<option value="lawnMower">Lawn Mower</option>
-						<option value="manualTool">Manual Tool</option>
-						<option value="rideOnMower">Ride On Mower</option>
-						<option value="strimmer">Strimmer</option>
-					</select>
-				</label><br>
-			</div>
 			<div class="col-lg-12">
-				<input id="submit" name="submit" type="submit">
+				<br><input id="addProduct" name="addProduct" type="submit" value="Add Photo">
 			</div>
 		</form>
 		<!-- /. Form -->
 
 	</div>
-	<?php
-
-		// PHP for form processing
-
-		// While this form will only be used by members of staff, it is still best practice to complete form checks.
-		// It is ALWAYS recommended to perform security checks on ALL user input whomever is entering the information.
-
-		if (isset($_POST['submit'])) {
-
-			/* --------------------------------------------
-			 * Variables From User Input
-			-------------------------------------------- */
-
-			$make 			= $_POST['make'];
-			$model 			= $_POST['model'];
-			$name 			= $_POST['name'];
-			$price 			= $_POST['price'];
-			$qtyAvailable 	= $_POST['qtyAvailable'];
-			$description 	= $_POST['description'];
-			$tags 			= $_POST['tags']; // Returns the value of the checkbox, not what is displayed to the user. This is then
-			 								  // Placed in to an array as the name of the checkboxes in the tag list  is tags[]
-			$warrantyID 	= $_POST['warrantyID']; // Returns the value of the radio button, not what is displayed to the user
-
-			$tags = implode(", ", $_POST['tags']); // By imploding the contents of the array, this turns
-			 									   // the array data into string data which is then used
-												   // to insert in to the database
-
-			/* --------------------------------------------
-			 * Variables From File Information
-			-------------------------------------------- */
-
-			$fileName 			= $_FILES['userfile']['name'];
-			$tmpName 			= $_FILES['userfile']['tmp_name'];
-			$fileSize 			= $_FILES['userfile']['size'];
-			$fileType 			= $_FILES['userfile']['type'];
-			$productPhotoName 	= $_POST['productPhotoName'];
-			$folderName 		= $_POST['folderName']; // Returns the value of the dropdown option, not what is
-			// displayed to the user
-
-			// This determines where the file is to be uploaded
-			$uploadDir = '../pics/products/'.$folderName.'/';
-
-			$fileName = addslashes($fileName);
-			$filePath = addslashes($filePath);
-
-			// This variable takes the path of the directory to which the file is to be uploaded to
-			// and appends the file name to that directory, this is what is uploaded to the database,
-			// the file itself will be uploaded and stored wherever the path pointed to.
-			$filePath = $uploadDir . $fileName;
-
-			/* --------------------------------------------
-			 * User Input From Form Validation
-			-------------------------------------------- */
-
-			// SQL INJECTION COUNTERMEASURES
-			// This only has to apply to fields that allow users to type string data in, fields that
-			// have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
-			// The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
-			// will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
-
-			// Escape any special characters, for example O'Conner becomes O\'Conner
-			// The first parameter of mysqli_real_escape_string is the database connection to open,
-			// The second parameter is the string to have the special characters escaped.
-			$make = mysqli_real_escape_string($conn, $make);
-			$model = mysqli_real_escape_string($conn, $model);
-			$name = mysqli_real_escape_string($conn, $name);
-			$description = mysqli_real_escape_string($conn, $description);
-			$productPhotoName = mysqli_real_escape_string($conn, $productPhotoName);
-
-			// Trim any whitespace from the beginning and end of the user input
-			$make = trim($make);
-			$model = trim($model);
-			$name = trim($name);
-			$description = trim($description);
-			$productPhotoName = trim($productPhotoName);
-
-			// Remove any HTML & PHP tags that may have been injected in to the input
-			$make = strip_tags($make);
-			$model = strip_tags($model);
-			$name = strip_tags($name);
-			$description = strip_tags($description);
-			$productPhotoName = strip_tags($productPhotoName);
-
-			// Convert any tags that may have slipped through in to string data,
-			// for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
-			$make = htmlentities($make);
-			$model = htmlentities($model);
-			$name = htmlentities($name);
-			$description = htmlentities($description);
-			$productPhotoName = htmlentities($productPhotoName);
-
-			/* --------------------------------------------
-			 * Form Checks
-			-------------------------------------------- */
-
-			// Check ALL form entries have been filled in
-			if (empty($make) || empty($model) || empty($name) || empty($price) || empty($qtyAvailable) || empty($description) || empty($tags) || empty($warrantyID) || empty($productPhotoName)) {
-				echo "ALL Fields must be completed";
-			} else {
-
-				$result = move_uploaded_file($tmpName, $filePath);
-				if (!$result) {
-					echo "Error uploading file";
-					exit;
-				} else {
-
-					// Put a SQL query in to a variable
-					// Because there are two insert queries being performed at the same time, a transaction is needed
-					// A transaction will only perform the queries inside of it if they can all be executed, if one of the
-					// queries cannot be performed, none of the queries will be executed.
-					// Using transactions, not only make sure all the queries can be performed, but also if someone else
-					// is trying to change the same table in the database at exactly the same time, it prevents duplication,
-					// as one users actions will be performed. The other users actions will not be performed as the transaction
-					// will see the table has changed and it cannot complete the queries it was supposed to apply, therefore
-					// it will not perform any of the queries.
-
-					mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
-
-					mysqli_query($conn, "INSERT INTO `product` (`make`, `model`, `name`, `price`, `qtyAvailable`, `description`, `tags`, `warrantyID`) VALUES ('".$make."', '".$model."', '".$name."', '".$price."', '".$qtyAvailable."', '".$description."', '".$tags."', '".$warrantyID."');");
-
-					mysqli_query($conn, "INSERT INTO `productPhoto` (`fileName`, `fileType`, `fileSize`, `fileLocation`, `productPhotoName`, `masterPhoto`) VALUES ('".$fileName."', '".$fileType."', '".$fileSize."', '".$filePath."', '".$productPhotoName."', '1');");
-
-					mysqli_commit($conn);
-
-					//echo $insert;
-
-
-					// Perform the SQL query
-					// $result = $conn -> query($insert) or die($conn.__LINE__);
-
-
-				}
-
-
-			} // /. End of query
-
-		} // /. End of if (isset($_POST['submit']))
-
-		// /.PHP for form processing
-
-	?>
 
 </div>
 <!-- /.container -->

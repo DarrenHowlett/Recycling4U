@@ -68,6 +68,9 @@
 					<a href="login.php">Log In</a>
 				</li>
 				<li>
+					<a href="profile.php">My Profile</a>
+				</li>
+				<li>
 					<a href="logout.php">Log Out</a>
 				</li>
 			</ul>

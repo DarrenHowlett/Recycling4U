@@ -11,152 +11,6 @@
     }
     // /. Open database connection
 
-    // Page specific PHP
-    if (isset($_POST['submit'])) {
-        /* --------------------------------------------
-         * Variables From User Input
-        -------------------------------------------- */
-
-        $email = $_POST['email'];
-        $pwrd = $_POST['pwrd'];
-
-        /* --------------------------------------------
-         * User Input From Form Validation
-        -------------------------------------------- */
-
-        // SQL INJECTION COUNTERMEASURES
-        // This only has to apply to fields that allow users to type string data in, fields that
-        // have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
-        // The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
-        // will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
-
-        // Escape any special characters, for example O'Conner becomes O\'Conner
-        // The first parameter of mysqli_real_escape_string is the database connection to open,
-        // The second parameter is the string to have the special characters escaped.
-        $email = mysqli_real_escape_string($conn, $email);
-        $pwrd = mysqli_real_escape_string($conn, $pwrd);
-
-        // Trim any whitespace from the beginning and end of the user input
-        $email = trim($email);
-        $pwrd = trim($pwrd);
-
-        // Remove any HTML & PHP tags that may have been injected in to the input
-        $email = strip_tags($email);
-        $pwrd = strip_tags($pwrd);
-
-        // Convert any tags that may have slipped through in to string data,
-        // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
-        $email = htmlentities($email);
-        $pwrd = htmlentities($pwrd);
-
-        /* --------------------------------------------
-         * Form Checks
-        -------------------------------------------- */
-
-        // Check that either of the form fields have not been left blank if any have been,
-        // display an error message
-        if (empty($email) || empty($pwrd)) {
-            ?>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p class="lead">Both email and password fields must be filled in.</p>
-                        <a href="login.php">Back to log in page.</a>
-                    </div>
-                </div>
-            </div>
-            <?php
-        } else {
-
-            /* --------------------------------------------
-             * Check email matches an entry in database
-            -------------------------------------------- */
-
-            // Select the email from the table user WHERE an email entered in the form matches
-            // is an EXACT match to an email in the database.  It has to be an EXACT match as BINARY has been used in
-            // the query, this is what tells the query to only return exact matches.
-            $select = "SELECT `email` FROM `user` WHERE `email` LIKE BINARY '".$email."'";
-
-            // Perform a query on the database using the SQL in the variable $select
-            // and store the result in this $result variable.  As the SQL is asking to return an email address based
-            // on the email address entered in the form, either an email address is returned or not.
-            $result = $conn->query($select) or die($conn.__LINE__);
-
-            // Check how many results are returned.  This is achieved by seeing how many rows from the table are
-            // returned.  If 0 rows are returned, this means no email address matched what was entered in to the form.
-            // If this is the case, then display an error message.
-            if ($result = mysqli_num_rows($result) == 0) {
-                // If email DOES NOT exist, display this message
-                ?>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <p class="lead">The email entered does not match any on record! Please try again.</p>
-                            <a href="login.php">Back to log in page.</a>
-                        </div>
-                    </div>
-                </div>
-                <?php
-
-                // If the amount of rows returned is grater than 0, then move on to the next step in the
-                // verification process.
-            } else {
-
-                /* ----------------------------------------------------------------------
-                 * Check password matches the database entry associated with the email
-                ---------------------------------------------------------------------- */
-
-                // Select the record that matches the email entered in the form and return the password associated with
-                // that record.
-                $select = "SELECT `password` FROM `user` WHERE `email` LIKE BINARY '".$email."'";
-
-                // Perform the query using the SQL held in the variable $select.
-                $result = $conn->query($select) or die($conn.__LINE__);
-
-                // While there are results returned from the table, put them in an associative array with the variable
-                // name of $row.  The attributes of the record can then be called using their name.  As the query is
-                // only asking for the password to be returned, and the attribute name of the corresponding field is
-                // called password, the code to return the attribute will be $row['password'].
-                while ($row = $result -> fetch_assoc()) {
-
-                    // This will store the password that is in the record of the returned result in to a variable
-                    $dbpwrd = $row['password'];
-
-                    // This will then check that the password entered in to the form is an exact match to the password
-                    // returned.  As the password in the table was hashed for security, the password entered in to the
-                    // needs to be hashed, this is what the password_verify function performs
-                    $pwrdCheck = password_verify($pwrd, $dbpwrd);
-
-                    // If the passwords DO NOT match, display an error message
-                    if ($pwrdCheck != TRUE) {
-                    ?>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <p class="lead">The password entered DOES NOT match the password on record! Please try again.</p>
-                                <a href="login.php">Back to log in page.</a>
-                            </div>
-                        </div>
-                    </div>
-                    <?php
-                    } else {
-
-                        // If after the checks have been performed and the passwords DO match, then redirect the user to
-                        // the products page so they can begin shopping.
-                        header('Location: products.php');
-
-                    } // End of password check else
-
-                } // End of password while loop
-
-            } // /. End of password else
-
-        } // /. End of email else
-
-    } // /. End of if (isset)
-
-    // /. Page specific PHP
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -242,7 +96,212 @@
 <!-- /.nav -->
 
 <!-- Page Content -->
-<div class="container loginMainContent">
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>View/Update Profile</h1>
+            <p class="lead">If you would like to view/update your profile, please enter you email address and password below to continue.</p>
+        </div>
+        <div class="col-lg-12">
+            <h1>Sign In</h1>
+            <!--<p class="lead">Upon successful log in you will be automatically redirected to the Products page.</p>-->
+            <form method="post" action="">
+                <label for="email">Email:<br>
+                    <input id="email" name="email" type="email" required="required">
+                </label><br>
+                <label for="pwrd">Password:<br>
+                    <input id="pwrd" name="pwrd" type="password" required="required">
+                </label><br>
+                <input id="submit" name="submit" type="submit">
+            </form>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <?php
+
+        // Page specific PHP
+        if (isset($_POST['submit'])) {
+        /* --------------------------------------------
+        * Variables From User Input
+        -------------------------------------------- */
+
+        $email = $_POST['email'];
+        $pwrd = $_POST['pwrd'];
+
+        /* --------------------------------------------
+        * User Input From Form Validation
+        -------------------------------------------- */
+
+        // SQL INJECTION COUNTERMEASURES
+        // This only has to apply to fields that allow users to type string data in, fields that
+        // have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
+        // The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
+        // will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
+
+        // Escape any special characters, for example O'Conner becomes O\'Conner
+        // The first parameter of mysqli_real_escape_string is the database connection to open,
+        // The second parameter is the string to have the special characters escaped.
+        $email = mysqli_real_escape_string($conn, $email);
+        $pwrd = mysqli_real_escape_string($conn, $pwrd);
+
+        // Trim any whitespace from the beginning and end of the user input
+        $email = trim($email);
+        $pwrd = trim($pwrd);
+
+        // Remove any HTML & PHP tags that may have been injected in to the input
+        $email = strip_tags($email);
+        $pwrd = strip_tags($pwrd);
+
+        // Convert any tags that may have slipped through in to string data,
+        // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
+        $email = htmlentities($email);
+        $pwrd = htmlentities($pwrd);
+
+        /* --------------------------------------------
+        * Form Checks
+        -------------------------------------------- */
+
+        // Check that either of the form fields have not been left blank if any have been,
+        // display an error message
+        if (empty($email) || empty($pwrd)) {
+        ?>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="lead">Both email and password fields must be filled in.</p>
+                </div>
+            </div>
+        </div>
+        <?php
+        } else {
+
+            /* --------------------------------------------
+             * Check email matches an entry in database
+            -------------------------------------------- */
+
+            // Select the email from the table user WHERE an email entered in the form matches
+            // is an EXACT match to an email in the database.  It has to be an EXACT match as BINARY has been used in
+            // the query, this is what tells the query to only return exact matches.
+            $select = "SELECT `email` FROM `user` WHERE `email` LIKE BINARY '".$email."'";
+
+            // Perform a query on the database using the SQL in the variable $select
+            // and store the result in this $result variable.  As the SQL is asking to return an email address based
+            // on the email address entered in the form, either an email address is returned or not.
+            $result = $conn->query($select) or die($conn.__LINE__);
+
+            // Check how many results are returned.  This is achieved by seeing how many rows from the table are
+            // returned.  If 0 rows are returned, this means no email address matched what was entered in to the form.
+            // If this is the case, then display an error message.
+            if ($result = mysqli_num_rows($result) == 0) {
+                // If email DOES NOT exist, display this message
+                ?>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <p class="lead">The email entered does not match any on record! Please try again.</p>
+                        </div>
+                    </div>
+                </div>
+                <?php
+
+                // If the amount of rows returned is grater than 0, then move on to the next step in the
+                // verification process.
+            } else {
+
+                /* ----------------------------------------------------------------------
+                 * Check password matches the database entry associated with the email
+                ---------------------------------------------------------------------- */
+
+                // Select the record that matches the email entered in the form and return the password associated with
+                // that record.
+                $select = "SELECT `password` FROM `user` WHERE `email` LIKE BINARY '".$email."'";
+
+                // Perform the query using the SQL held in the variable $select.
+                $result = $conn->query($select) or die($conn.__LINE__);
+
+                // While there are results returned from the table, put them in an associative array with the variable
+                // name of $row.  The attributes of the record can then be called using their name.  As the query is
+                // only asking for the password to be returned, and the attribute name of the corresponding field is
+                // called password, the code to return the attribute will be $row['password'].
+                while ($row = $result -> fetch_assoc()) {
+
+                    // This will store the password that is in the record of the returned result in to a variable
+                    $dbpwrd = $row['password'];
+
+                    // This will then check that the password entered in to the form is an exact match to the password
+                    // returned.  As the password in the table was hashed for security, the password entered in to the
+                    // needs to be hashed, this is what the password_verify function performs
+                    $pwrdCheck = password_verify($pwrd, $dbpwrd);
+
+                    // If the passwords DO NOT match, display an error message
+                    if ($pwrdCheck != TRUE) {
+                        ?>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <p class="lead">The password entered DOES NOT match the password on record! Please try again.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    } else {
+
+                        // If after the checks have been performed and the passwords DO match, then show the users profile and a form to update/delete their account.
+
+                        $select = "SELECT * FROM `user` WHERE `email` LIKE BINARY '".$email."'";
+                        $result = $conn -> query($select) or die($conn.__LINE__);
+
+                        while ($row = $result -> fetch_assoc()) {
+                            ?>
+                            <h2>Your Profile:</h2>
+                            <ul>
+                                <li>Name: <?php echo $row['title']." ".$row['forename']." ".$row['surname']; ?></li>
+                                <li>Address:<br><?php echo $row['firstLineAddress']."<br>".$row['secondLineAddress']."<br>".$row['town']."<br>".$row['county']."<br>".$row['postcode']; ?></li>
+                                <li>Phone: <?php echo $row['phone']; ?></li>
+                                <li>Email: <?php echo $row['email']; ?></li>
+                                <li>Password: <?php echo $row['password']; ?></li>
+                            </ul>
+                            <form action="updateProfile.php" method="post">
+                                <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
+                                <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">
+                                <input id="updateProfile" name="updateProfile" type="submit" value="Update Profile">
+                            </form>
+                            <br>
+                            <form action="updateEmail.php" method="post">
+                                <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
+                                <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">
+                                <input id="updateEmail" name="updateEmail" type="submit" value="Change Email">
+                            </form>
+                            <br>
+                            <form action="updatePwrd.php" method="post">
+                                <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
+                                <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">
+                                <input id="updatePwrd" name="updatePwrd" type="submit" value="Change Password">
+                            </form>
+                            <br>
+                            <form action="deleteProfile.php" method="post">
+                                <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
+                                <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">
+                                <input id="deleteProfile" name="deleteProfile" type="submit" value="Delete Profile">
+                            </form>
+                            <?php
+                        }
+
+                    } // End of password check else
+
+                } // End of password while loop
+
+            } // /. End of password else
+
+        } // /. End of email else
+
+        } // /. End of if (isset)
+
+    // /. Page specific PHP
+
+    ?>
 
 </div>
 <!-- /.container -->
@@ -327,7 +386,5 @@
 
 </html>
 <?php
-    // Close database connection
     mysqli_close($conn);
-    // /. Close database connection
 ?>
