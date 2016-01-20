@@ -14,6 +14,8 @@ I have decided to put this code on GitHub as I am using multiple devices, my des
 
 If anyone does happen to look at this code, please can they comment only.  Obviously like any development process, especially for a novice like myself, getting feedback is an essential part of the process, this can even be being shown how to do something, but finally the code is to be mine and mine alone as this is what I will be graded on.
 
+Also a major note on this project.  I am using GitHub for the first time as well, so please excuse any n))b mistakes with comments etc, hopefully as I use GitHub more the mistakes should disappear.
+
 Thanks in advance
 
 Darren
