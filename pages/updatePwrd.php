@@ -1,3 +1,80 @@
+<?php
+
+    // Include/Required files
+    require_once ('../admin/config/registeredUser.php');
+
+    // Open database connection
+    $conn = new mysqli($host, $user, $pass, $dbase);
+    if (mysqli_connect_errno()) {
+        printf("Database connection failed due to: %s\n", mysqli_connect_error());
+        exit();
+    }
+    // /. Open database connection
+
+    if (isset($_POST['updateProfile'])) {
+
+        $email = $_POST['email'];
+        $pwrd = $_POST['pwrd'];
+
+        $select = "SELECT * FROM `user` WHERE `email` LIKE BINARY '".$email."' AND `password` LIKE BINARY '".$pwrd."'";
+        $result = $conn -> query($select) or die($conn.__LINE__);
+
+        while ($row = $result -> fetch_assoc()) {
+        ?>
+
+        <div class="container">
+        <div class="row">
+        <div class="col-lg-12">
+            <h1>Update Profile</h1>
+            <p class="lead">Please use the form below to make any changes to the information we have on record for you.  To change your email address and password please fill in both the email/password and confrim email/password boxes.</p>
+        </div>
+
+        <div class="col-lg-12">
+            <form action="updateProfileConfirmation.php" method="post">
+                <fieldset>
+                    <input id="userID" name="userID" hidden="hidden" value="<?php echo $row['id']; ?>">
+                    <input id="oldEmail" name="oldEmail" hidden="hidden" value="<?php echo $email; ?>">
+                    <input id="oldPwrd" name="oldPwrd" hidden="hidden" value="<?php echo $pwrd; ?>">
+                    <label for="title">Title<br>
+                        <input id="title" name="title" type="text" value="<?php echo $row['title']; ?>">
+                    </label><br>
+                    <label for="forename">Forename<br>
+                        <input id="forename" name="forename" type="text" value="<?php echo $row['forename']; ?>">
+                    </label><br>
+                    <label for="surname">Surname<br>
+                        <input id="surname" name="surname" type="text" value="<?php echo $row['surname']; ?>">
+                    </label><br>
+                    <label for="firstLineAddress">1st Line Address<br>
+                        <input id="firstLineAddress" name="firstLineAddress" type="text" value="<?php echo $row['firstLineAddress']; ?>">
+                    </label><br>
+                    <label for="secondLineAddress">2nd Line Address<br>
+                        <input id="secondLineAddress" name="secondLineAddress" type="text" value="<?php echo $row['secondLineAddress']; ?>">
+                    </label><br>
+                    <label for="town">Town<br>
+                        <input id="town" name="town" type="text" value="<?php echo $row['town']; ?>">
+                    </label><br>
+                    <label for="county">County<br>
+                        <input id="county" name="county" type="text" value="<?php echo $row['county']; ?>">
+                    </label><br>
+                    <label for="postcode">Postcode<br>
+                        <input id="postcode" name="postcode" type="text" value="<?php echo $row['postcode']; ?>">
+                    </label><br>
+                    <label for="phone">Phone<br>
+                        <input id="phone" name="phone" type="tel" value="<?php echo $row['phone']; ?>">
+                    </label><br><br>
+                    <input id="submit" name="submit" type="submit" value="Update My Profile">
+                </fieldset>
+            </form>
+
+        </div>
+        </div>
+
+        <?php
+
+        } // /. End of while
+
+    } // /. End of if (isset($_POST['updateProfile']))
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,28 +161,8 @@
 <!-- Page Content -->
 <div class="container loginMainContent">
 
-    <div class="row">
-        <div class="col-lg-6">
-            <h1>Register</h1>
-            <p class="lead">If you have not already registered with us, you will not be able to buy any goods until you have done so.  Please <a href="register.php">go to the register page</a> to register your details.</p>
-        </div>
-        <div class="col-lg-6">
-            <h1>Log In</h1>
-            <!--<p class="lead">Upon successful log in you will be automatically redirected to the Products page.</p>-->
-            <form method="post" action="loginResult.php">
-                <label for="email">Email:<br>
-                    <input id="email" name="email" type="email" required="required">
-                </label><br>
-                <label for="pwrd">Password:<br>
-                    <input id="pwrd" name="pwrd" type="password" required="required">
-                </label><br>
-                <input id="submit" name="submit" type="submit">
-            </form>
-        </div>
-    </div>
-    <!-- /.row -->
-
 </div>
+
 <!-- /.container -->
 
 <div class="container">
@@ -187,3 +244,6 @@
 </body>
 
 </html>
+<?php
+    mysqli_close($conn);
+?>

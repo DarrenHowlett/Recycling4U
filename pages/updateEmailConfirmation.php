@@ -1,7 +1,7 @@
 <?php
 
     // Include/Required files
-    require_once ('../admin/config/normalUser.php');
+    require_once ('../admin/config/registeredUser.php');
 
     // Open database connection
     $conn = new mysqli($host, $user, $pass, $dbase);
@@ -11,18 +11,29 @@
     }
     // /. Open database connection
 
-    // Page specific PHP
     if (isset($_POST['submit'])) {
-        /* --------------------------------------------
-         * Variables From User Input
-        -------------------------------------------- */
 
-        $email = $_POST['email'];
-        $pwrd = $_POST['pwrd'];
+        $oldEmail = $_POST['oldEmail'];
+        $oldPwrd = $_POST['oldPwrd'];
+        $userID = $_POST['userID'];
+
+        $title 				= $_POST['title'];
+        $forename 			= $_POST['forename'];
+        $surname 			= $_POST['surname'];
+        $firstLineAddress 	= $_POST['firstLineAddress'];
+        $secondLineAddress 	= $_POST['secondLineAddress'];
+        $town 				= $_POST['town'];
+        $county 			= $_POST['county'];
+        $postcode 			= $_POST['postcode'];
+        $phone 				= $_POST['phone'];
+        $email 				= $_POST['email'];
+        $emailConfirm 		= $_POST['emailConfirm'];
+        $pwrd 				= $_POST['pwrd'];
+        $pwrdConfirm 		= $_POST['pwrdConfirm'];
 
         /* --------------------------------------------
-         * User Input From Form Validation
-        -------------------------------------------- */
+		 * User Input From Form Validation
+		-------------------------------------------- */
 
         // SQL INJECTION COUNTERMEASURES
         // This only has to apply to fields that allow users to type string data in, fields that
@@ -33,130 +44,121 @@
         // Escape any special characters, for example O'Conner becomes O\'Conner
         // The first parameter of mysqli_real_escape_string is the database connection to open,
         // The second parameter is the string to have the special characters escaped.
+        $title = mysqli_real_escape_string($conn, $title);
+        $forename = mysqli_real_escape_string($conn, $forename);
+        $surname = mysqli_real_escape_string($conn, $surname);
+        $firstLineAddress = mysqli_real_escape_string($conn, $firstLineAddress);
+        $secondLineAddress = mysqli_real_escape_string($conn, $secondLineAddress);
+        $town = mysqli_real_escape_string($conn, $town);
+        $county = mysqli_real_escape_string($conn, $county);
+        $postcode = mysqli_real_escape_string($conn, $postcode);
+        $phone = mysqli_real_escape_string($conn, $phone);
         $email = mysqli_real_escape_string($conn, $email);
+        $emailConfirm = mysqli_real_escape_string($conn, $emailConfirm);
         $pwrd = mysqli_real_escape_string($conn, $pwrd);
+        $pwrdConfirm = mysqli_real_escape_string($conn, $pwrdConfirm);
 
         // Trim any whitespace from the beginning and end of the user input
+        $title = trim($title);
+        $forename = trim($forename);
+        $surname = trim($surname);
+        $firstLineAddress = trim($firstLineAddress);
+        $secondLineAddress = trim($secondLineAddress);
+        $town = trim($town);
+        $county = trim($county);
+        $postcode = trim($postcode);
+        $phone = trim($phone);
         $email = trim($email);
+        $emailConfirm = trim($emailConfirm);
         $pwrd = trim($pwrd);
+        $pwrdConfirm = trim($pwrdConfirm);
 
         // Remove any HTML & PHP tags that may have been injected in to the input
+        $title = strip_tags($title);
+        $forename = strip_tags($forename);
+        $surname = strip_tags($surname);
+        $firstLineAddress = strip_tags($firstLineAddress);
+        $secondLineAddress = strip_tags($secondLineAddress);
+        $town = strip_tags($town);
+        $county = strip_tags($county);
+        $postcode = strip_tags($postcode);
+        $phone = strip_tags($phone);
         $email = strip_tags($email);
+        $emailConfirm = strip_tags($emailConfirm);
         $pwrd = strip_tags($pwrd);
+        $pwrdConfirm = strip_tags($pwrdConfirm);
 
         // Convert any tags that may have slipped through in to string data,
         // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
+        $title = htmlentities($title);
+        $forename = htmlentities($forename);
+        $surname = htmlentities($surname);
+        $firstLineAddress = htmlentities($firstLineAddress);
+        $secondLineAddress = htmlentities($secondLineAddress);
+        $town = htmlentities($town);
+        $county = htmlentities($county);
+        $postcode = htmlentities($postcode);
+        $phone = htmlentities($phone);
         $email = htmlentities($email);
+        $emailConfirm = htmlentities($emailConfirm);
         $pwrd = htmlentities($pwrd);
+        $pwrdConfirm = htmlentities($pwrdConfirm);
 
-        /* --------------------------------------------
-         * Form Checks
-        -------------------------------------------- */
 
-        // Check that either of the form fields have not been left blank if any have been,
-        // display an error message
-        if (empty($email) || empty($pwrd)) {
-            ?>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p class="lead">Both email and password fields must be filled in.</p>
-                        <a href="login.php">Back to log in page.</a>
-                    </div>
+
+        ?>
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-lg-12">
+
+                    <form action="updateProfileResults.php" method="post">
+                        <fieldset>
+                            <label for="title">Title<br>
+                                <input id="userID" name="userID" type="text" hidden="hidden" value="<?php echo $userID; ?>">
+                                <input id="title" name="title" type="text" value="<?php echo $title; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="forename">Forename<br>
+                                <input id="forename" name="forename" type="text" value="<?php echo $forename; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="surname">Surname<br>
+                                <input id="surname" name="surname" type="text" value="<?php echo $surname; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="firstLineAddress">1st Line Address<br>
+                                <input id="firstLineAddress" name="firstLineAddress" type="text" value="<?php echo $firstLineAddress; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="secondLineAddress">2nd Line Address<br>
+                                <input id="secondLineAddress" name="secondLineAddress" type="text" value="<?php echo $secondLineAddress; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="town">Town<br>
+                                <input id="town" name="town" type="text" value="<?php echo $town; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="county">County<br>
+                                <input id="county" name="county" type="text" value="<?php echo $county; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="postcode">Postcode<br>
+                                <input id="postcode" name="postcode" type="text" value="<?php echo $postcode; ?>" readonly="readonly">
+                            </label><br>
+                            <label for="phone">Phone<br>
+                                <input id="phone" name="phone" type="tel" value="<?php echo $phone; ?>" readonly="readonly">
+                            </label><br><br>
+                            <p>If these details are correct, click the update my profile button, if they are not correct, please <a href="profile.php">go back to and make the necessary changes.</a></p>
+                            <input id="submitConfirmation" name="submitConfirmation" type="submit" value="Update My Profile">
+                        </fieldset>
+                    </form>
+
                 </div>
+
             </div>
-            <?php
-        } else {
 
-            /* --------------------------------------------
-             * Check email matches an entry in database
-            -------------------------------------------- */
+        </div>
 
-            // Select the email from the table user WHERE an email entered in the form matches
-            // is an EXACT match to an email in the database.  It has to be an EXACT match as BINARY has been used in
-            // the query, this is what tells the query to only return exact matches.
-            $select = "SELECT `email` FROM `user` WHERE `email` LIKE BINARY '".$email."'";
+        <?php
 
-            // Perform a query on the database using the SQL in the variable $select
-            // and store the result in this $result variable.  As the SQL is asking to return an email address based
-            // on the email address entered in the form, either an email address is returned or not.
-            $result = $conn->query($select) or die($conn.__LINE__);
 
-            // Check how many results are returned.  This is achieved by seeing how many rows from the table are
-            // returned.  If 0 rows are returned, this means no email address matched what was entered in to the form.
-            // If this is the case, then display an error message.
-            if ($result = mysqli_num_rows($result) == 0) {
-                // If email DOES NOT exist, display this message
-                ?>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <p class="lead">The email entered does not match any on record! Please try again.</p>
-                            <a href="login.php">Back to log in page.</a>
-                        </div>
-                    </div>
-                </div>
-                <?php
-
-                // If the amount of rows returned is grater than 0, then move on to the next step in the
-                // verification process.
-            } else {
-
-                /* ----------------------------------------------------------------------
-                 * Check password matches the database entry associated with the email
-                ---------------------------------------------------------------------- */
-
-                // Select the record that matches the email entered in the form and return the password associated with
-                // that record.
-                $select = "SELECT `password` FROM `user` WHERE `email` LIKE BINARY '".$email."'";
-
-                // Perform the query using the SQL held in the variable $select.
-                $result = $conn->query($select) or die($conn.__LINE__);
-
-                // While there are results returned from the table, put them in an associative array with the variable
-                // name of $row.  The attributes of the record can then be called using their name.  As the query is
-                // only asking for the password to be returned, and the attribute name of the corresponding field is
-                // called password, the code to return the attribute will be $row['password'].
-                while ($row = $result -> fetch_assoc()) {
-
-                    // This will store the password that is in the record of the returned result in to a variable
-                    $dbpwrd = $row['password'];
-
-                    // This will then check that the password entered in to the form is an exact match to the password
-                    // returned.  As the password in the table was hashed for security, the password entered in to the
-                    // needs to be hashed, this is what the password_verify function performs
-                    $pwrdCheck = password_verify($pwrd, $dbpwrd);
-
-                    // If the passwords DO NOT match, display an error message
-                    if ($pwrdCheck != TRUE) {
-                    ?>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <p class="lead">The password entered DOES NOT match the password on record! Please try again.</p>
-                                <a href="login.php">Back to log in page.</a>
-                            </div>
-                        </div>
-                    </div>
-                    <?php
-                    } else {
-
-                        // If after the checks have been performed and the passwords DO match, then redirect the user to
-                        // the products page so they can begin shopping.
-                        header('Location: products.php');
-
-                    } // End of password check else
-
-                } // End of password while loop
-
-            } // /. End of password else
-
-        } // /. End of email else
-
-    } // /. End of if (isset)
-
-    // /. Page specific PHP
-
+    } // /. End of if (isset($_POST['updateProfile']))
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -245,6 +247,7 @@
 <div class="container loginMainContent">
 
 </div>
+
 <!-- /.container -->
 
 <div class="container">
@@ -327,7 +330,5 @@
 
 </html>
 <?php
-    // Close database connection
     mysqli_close($conn);
-    // /. Close database connection
 ?>

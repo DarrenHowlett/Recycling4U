@@ -1,3 +1,57 @@
+<?php
+
+    // Include/Required files
+    require_once ('../admin/config/registeredUser.php');
+
+    // Open database connection
+    $conn = new mysqli($host, $user, $pass, $dbase);
+    if (mysqli_connect_errno()) {
+        printf("Database connection failed due to: %s\n", mysqli_connect_error());
+        exit();
+    }
+    // /. Open database connection
+
+    if (isset($_POST['updateEmail'])) {
+
+        $email = $_POST['email'];
+        $pwrd = $_POST['pwrd'];
+
+        $select = "SELECT * FROM `user` WHERE `email` LIKE BINARY '".$email."' AND `password` LIKE BINARY '".$pwrd."'";
+        $result = $conn -> query($select) or die($conn.__LINE__);
+
+        while ($row = $result -> fetch_assoc()) {
+        ?>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Update Email</h1>
+                    <p class="lead">Please use the form below to update your email address.</p>
+                </div>
+
+                <div class="col-lg-12">
+                    <form action="updateEmailConfirmation.php" method="post">
+                        <fieldset>
+                            <input id="userID" name="userID" hidden="hidden" value="<?php echo $row['id']; ?>">
+                            <label for="newEmail">New Email<br>
+                                <input id="newEmail" name="newEmail" type="text">
+                            </label><br>
+                            <label for="confirmNewEmail">Confirm New Email<br>
+                                <input id="confirmNewEmail" name="confirmNewEmail" type="text">
+                            </label><br><br>
+                            <input id="submit" name="submit" type="submit" value="Update My Email">
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <?php
+
+        } // /. End of while
+
+    } // /. End of if (isset($_POST['updateProfile']))
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -82,30 +136,10 @@
 <!-- /.nav -->
 
 <!-- Page Content -->
-<div class="container loginMainContent">
-
-    <div class="row">
-        <div class="col-lg-6">
-            <h1>Register</h1>
-            <p class="lead">If you have not already registered with us, you will not be able to buy any goods until you have done so.  Please <a href="register.php">go to the register page</a> to register your details.</p>
-        </div>
-        <div class="col-lg-6">
-            <h1>Log In</h1>
-            <!--<p class="lead">Upon successful log in you will be automatically redirected to the Products page.</p>-->
-            <form method="post" action="loginResult.php">
-                <label for="email">Email:<br>
-                    <input id="email" name="email" type="email" required="required">
-                </label><br>
-                <label for="pwrd">Password:<br>
-                    <input id="pwrd" name="pwrd" type="password" required="required">
-                </label><br>
-                <input id="submit" name="submit" type="submit">
-            </form>
-        </div>
-    </div>
-    <!-- /.row -->
+<div class="container">
 
 </div>
+
 <!-- /.container -->
 
 <div class="container">
@@ -187,3 +221,6 @@
 </body>
 
 </html>
+<?php
+    mysqli_close($conn);
+?>

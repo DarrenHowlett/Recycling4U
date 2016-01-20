@@ -164,7 +164,6 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<p class="lead">You Have Successfully Registered.</p>
-								<a href="register.php">Back to register page.</a>
 							</div>
 						</div>
 					</div>
@@ -248,6 +247,9 @@
 				</li>
 				<li>
 					<a href="login.php">Log In</a>
+				</li>
+				<li>
+					<a href="profile.php">My Profile</a>
 				</li>
 				<li>
 					<a href="logout.php">Log Out</a>
