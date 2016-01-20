@@ -272,13 +272,13 @@
                             <form action="updateEmail.php" method="post">
                                 <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
                                 <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">
-                                <input id="updateEmail" name="updateEmail" type="submit" value="Change Email">
+                                <input id="updateEmail" name="updateEmail" type="submit" value="Update Email">
                             </form>
                             <br>
                             <form action="updatePwrd.php" method="post">
                                 <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
                                 <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">
-                                <input id="updatePwrd" name="updatePwrd" type="submit" value="Change Password">
+                                <input id="updatePwrd" name="updatePwrd" type="submit" value="Update Password">
                             </form>
                             <br>
                             <form action="deleteProfile.php" method="post">

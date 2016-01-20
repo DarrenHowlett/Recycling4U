@@ -13,23 +13,9 @@
 
     if (isset($_POST['submit'])) {
 
-        $oldEmail = $_POST['oldEmail'];
-        $oldPwrd = $_POST['oldPwrd'];
         $userID = $_POST['userID'];
-
-        $title 				= $_POST['title'];
-        $forename 			= $_POST['forename'];
-        $surname 			= $_POST['surname'];
-        $firstLineAddress 	= $_POST['firstLineAddress'];
-        $secondLineAddress 	= $_POST['secondLineAddress'];
-        $town 				= $_POST['town'];
-        $county 			= $_POST['county'];
-        $postcode 			= $_POST['postcode'];
-        $phone 				= $_POST['phone'];
-        $email 				= $_POST['email'];
-        $emailConfirm 		= $_POST['emailConfirm'];
-        $pwrd 				= $_POST['pwrd'];
-        $pwrdConfirm 		= $_POST['pwrdConfirm'];
+        $email 		  = $_POST['newEmail'];
+        $emailConfirm = $_POST['confirmNewEmail'];
 
         /* --------------------------------------------
 		 * User Input From Form Validation
@@ -44,119 +30,75 @@
         // Escape any special characters, for example O'Conner becomes O\'Conner
         // The first parameter of mysqli_real_escape_string is the database connection to open,
         // The second parameter is the string to have the special characters escaped.
-        $title = mysqli_real_escape_string($conn, $title);
-        $forename = mysqli_real_escape_string($conn, $forename);
-        $surname = mysqli_real_escape_string($conn, $surname);
-        $firstLineAddress = mysqli_real_escape_string($conn, $firstLineAddress);
-        $secondLineAddress = mysqli_real_escape_string($conn, $secondLineAddress);
-        $town = mysqli_real_escape_string($conn, $town);
-        $county = mysqli_real_escape_string($conn, $county);
-        $postcode = mysqli_real_escape_string($conn, $postcode);
-        $phone = mysqli_real_escape_string($conn, $phone);
+
         $email = mysqli_real_escape_string($conn, $email);
         $emailConfirm = mysqli_real_escape_string($conn, $emailConfirm);
-        $pwrd = mysqli_real_escape_string($conn, $pwrd);
-        $pwrdConfirm = mysqli_real_escape_string($conn, $pwrdConfirm);
 
         // Trim any whitespace from the beginning and end of the user input
-        $title = trim($title);
-        $forename = trim($forename);
-        $surname = trim($surname);
-        $firstLineAddress = trim($firstLineAddress);
-        $secondLineAddress = trim($secondLineAddress);
-        $town = trim($town);
-        $county = trim($county);
-        $postcode = trim($postcode);
-        $phone = trim($phone);
+
         $email = trim($email);
         $emailConfirm = trim($emailConfirm);
-        $pwrd = trim($pwrd);
-        $pwrdConfirm = trim($pwrdConfirm);
 
         // Remove any HTML & PHP tags that may have been injected in to the input
-        $title = strip_tags($title);
-        $forename = strip_tags($forename);
-        $surname = strip_tags($surname);
-        $firstLineAddress = strip_tags($firstLineAddress);
-        $secondLineAddress = strip_tags($secondLineAddress);
-        $town = strip_tags($town);
-        $county = strip_tags($county);
-        $postcode = strip_tags($postcode);
-        $phone = strip_tags($phone);
+
         $email = strip_tags($email);
         $emailConfirm = strip_tags($emailConfirm);
-        $pwrd = strip_tags($pwrd);
-        $pwrdConfirm = strip_tags($pwrdConfirm);
 
         // Convert any tags that may have slipped through in to string data,
         // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
-        $title = htmlentities($title);
-        $forename = htmlentities($forename);
-        $surname = htmlentities($surname);
-        $firstLineAddress = htmlentities($firstLineAddress);
-        $secondLineAddress = htmlentities($secondLineAddress);
-        $town = htmlentities($town);
-        $county = htmlentities($county);
-        $postcode = htmlentities($postcode);
-        $phone = htmlentities($phone);
+
         $email = htmlentities($email);
         $emailConfirm = htmlentities($emailConfirm);
-        $pwrd = htmlentities($pwrd);
-        $pwrdConfirm = htmlentities($pwrdConfirm);
 
-
-
-        ?>
-
-        <div class="container">
-
-            <div class="row">
-
-                <div class="col-lg-12">
-
-                    <form action="updateProfileResults.php" method="post">
-                        <fieldset>
-                            <label for="title">Title<br>
-                                <input id="userID" name="userID" type="text" hidden="hidden" value="<?php echo $userID; ?>">
-                                <input id="title" name="title" type="text" value="<?php echo $title; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="forename">Forename<br>
-                                <input id="forename" name="forename" type="text" value="<?php echo $forename; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="surname">Surname<br>
-                                <input id="surname" name="surname" type="text" value="<?php echo $surname; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="firstLineAddress">1st Line Address<br>
-                                <input id="firstLineAddress" name="firstLineAddress" type="text" value="<?php echo $firstLineAddress; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="secondLineAddress">2nd Line Address<br>
-                                <input id="secondLineAddress" name="secondLineAddress" type="text" value="<?php echo $secondLineAddress; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="town">Town<br>
-                                <input id="town" name="town" type="text" value="<?php echo $town; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="county">County<br>
-                                <input id="county" name="county" type="text" value="<?php echo $county; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="postcode">Postcode<br>
-                                <input id="postcode" name="postcode" type="text" value="<?php echo $postcode; ?>" readonly="readonly">
-                            </label><br>
-                            <label for="phone">Phone<br>
-                                <input id="phone" name="phone" type="tel" value="<?php echo $phone; ?>" readonly="readonly">
-                            </label><br><br>
-                            <p>If these details are correct, click the update my profile button, if they are not correct, please <a href="profile.php">go back to and make the necessary changes.</a></p>
-                            <input id="submitConfirmation" name="submitConfirmation" type="submit" value="Update My Profile">
-                        </fieldset>
-                    </form>
-
+        if (empty($email) || empty($emailConfirm)) {
+            ?>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p class="lead">ALL fields must be filled in.</p>
+                        <a href="profile.php">Back to profile page.</a>
+                    </div>
                 </div>
-
             </div>
+            <?php
+        } else {
 
-        </div>
+            // Check email and emailComfirm match
+            if ($email != $emailConfirm) {
+                ?>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <p class="lead">The emails entered DO NOT match, please try again</p>
+                            <a href="profile.php">Back to profile page.</a>
+                        </div>
+                    </div>
+                </div>
+                <?php
+            } else {
+                ?>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form action="updateEmailResults.php" method="post">
+                                <fieldset>
+                                    <input id="userID" name="userID" type="text" value="<?php echo $userID; ?>" hidden="hidden">
+                                    <label for="newEmail">New Email<br>
+                                        <input id="newEmail" name="newEmail" type="text" value="<?php echo $email; ?>" readonly="readonly">
+                                    </label><br><br>
+                                    <p>If these details are correct, click the update my email button, if they are not
+                                        correct, please <a href="profile.php">go back to and make the necessary
+                                            changes.</a></p>
+                                    <input id="submitConfirmation" name="submitConfirmation" type="submit" value="Update My Email">
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <?php
+            } // /. End of emails DO NOT match
 
-        <?php
-
+        } // /. End of empty fields
 
     } // /. End of if (isset($_POST['updateProfile']))
 ?>

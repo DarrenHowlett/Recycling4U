@@ -26,10 +26,6 @@
         $county 			= $_POST['county'];
         $postcode 			= $_POST['postcode'];
         $phone 				= $_POST['phone'];
-        $email 				= $_POST['email'];
-        $emailConfirm 		= $_POST['emailConfirm'];
-        $pwrd 				= $_POST['pwrd'];
-        $pwrdConfirm 		= $_POST['pwrdConfirm'];
 
         /* --------------------------------------------
 		 * User Input From Form Validation
@@ -53,10 +49,6 @@
         $county = mysqli_real_escape_string($conn, $county);
         $postcode = mysqli_real_escape_string($conn, $postcode);
         $phone = mysqli_real_escape_string($conn, $phone);
-        $email = mysqli_real_escape_string($conn, $email);
-        $emailConfirm = mysqli_real_escape_string($conn, $emailConfirm);
-        $pwrd = mysqli_real_escape_string($conn, $pwrd);
-        $pwrdConfirm = mysqli_real_escape_string($conn, $pwrdConfirm);
 
         // Trim any whitespace from the beginning and end of the user input
         $title = trim($title);
@@ -68,10 +60,6 @@
         $county = trim($county);
         $postcode = trim($postcode);
         $phone = trim($phone);
-        $email = trim($email);
-        $emailConfirm = trim($emailConfirm);
-        $pwrd = trim($pwrd);
-        $pwrdConfirm = trim($pwrdConfirm);
 
         // Remove any HTML & PHP tags that may have been injected in to the input
         $title = strip_tags($title);
@@ -83,10 +71,6 @@
         $county = strip_tags($county);
         $postcode = strip_tags($postcode);
         $phone = strip_tags($phone);
-        $email = strip_tags($email);
-        $emailConfirm = strip_tags($emailConfirm);
-        $pwrd = strip_tags($pwrd);
-        $pwrdConfirm = strip_tags($pwrdConfirm);
 
         // Convert any tags that may have slipped through in to string data,
         // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
@@ -99,12 +83,6 @@
         $county = htmlentities($county);
         $postcode = htmlentities($postcode);
         $phone = htmlentities($phone);
-        $email = htmlentities($email);
-        $emailConfirm = htmlentities($emailConfirm);
-        $pwrd = htmlentities($pwrd);
-        $pwrdConfirm = htmlentities($pwrdConfirm);
-
-
 
         ?>
 
@@ -116,8 +94,8 @@
 
                     <form action="updateProfileResults.php" method="post">
                         <fieldset>
+                            <input id="userID" name="userID" type="text" hidden="hidden" value="<?php echo $userID; ?>">
                             <label for="title">Title<br>
-                                <input id="userID" name="userID" type="text" hidden="hidden" value="<?php echo $userID; ?>">
                                 <input id="title" name="title" type="text" value="<?php echo $title; ?>" readonly="readonly">
                             </label><br>
                             <label for="forename">Forename<br>
