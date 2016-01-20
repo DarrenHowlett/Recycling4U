@@ -143,7 +143,7 @@
 
                         // If after the checks have been performed and the passwords DO match, then redirect the user to
                         // the products page so they can begin shopping.
-                        header('Location: products.php');
+                        header('Location: productGallery.php');
 
                     } // End of password check else
 
@@ -213,7 +213,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="products.php">Products</a>
+                    <a href="productGallery.php">Products</a>
                 </li>
                 <li>
                     <a href="productUpload.php">Product Upload</a>

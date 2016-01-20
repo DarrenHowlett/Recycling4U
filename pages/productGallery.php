@@ -26,7 +26,7 @@
 	 * By using require_once and include_once, if a page needs the same resources as the page it is inside
 	 * the resources are only collected once, thus saving on page load times and bandwidth.
 	 */
-	require_once ('../admin/config/normalUser.php');
+	require_once ('../admin/config/registeredUser.php');
 	// /. Include/Required files
 
 	// Open database connection
@@ -74,8 +74,8 @@
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<script src="../js/html5shiv.min.js"></script>
+	<script src="../js/respond.min.js"></script>
 	<![endif]-->
 
 	<!-- Site Specific CSS -->
@@ -102,7 +102,7 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li>
-					<a href="products.php">Products</a>
+					<a href="productGallery.php">Products</a>
 				</li>
 				<li>
 					<a href="productUpload.php">Product Upload</a>
@@ -133,34 +133,38 @@
 <!-- Page Content -->
 <div class="container">
 
+	<!-- row -->
 	<div class="row">
-		<div class="col-lg-12 text-center">
-			<h1>Success!!!</h1>
-		</div>
-	</div>
-	<!-- /.row -->
-
-	<!-- This is the code for one shop item, but as PHP will be used, this will be the template for each item in the database.
+		<!-- This is the code for one shop item, but as PHP will be used, this will be the template for each item in the database.
 		 Each item will be placed in this template by using a while loop.  Each item could be hard coded using HTML, but the
 		 Downside is that if a new item is added/taken away the code has to be changed, whereas using the while loop in PHP,
 		 Each time an item is added/taken away from the database, it will automatically update on the web site. -->
-	<div class="row">
-		<div class="col-sm-4 col-lg-4 col-md-4">
-			<div class="thumbnail">
-				<!-- Thumbnail/Photo of product -->
-				<img src="http://placehold.it/320x150" alt="">
-				<div class="caption">
-					<!-- Price -->
-					<h4 class="pull-right">$00.00</h4>
-					<!-- Name of product/Link to expanded product page -->
-					<h4><a href="#">Link To Products Page</a>
-					</h4>
-					<!-- Information snippet on the product -->
-					<p>A small piece of info on the product</p>
+		<?php
+			$select = "SELECT * FROM `product`, `productPhoto` WHERE product.id = productPhoto.productID AND productPhoto.masterPhoto = 1";
+			$result = $conn -> query($select) or die($conn.__LINE__);
+
+			while ($row = $result -> fetch_assoc()) {
+				?>
+				<div class="col-sm-4 col-lg-4 col-md-4">
+					<div class="thumbnail">
+						<!-- Thumbnail/Photo of product -->
+						<img src="<?php echo $row['fileLocation']; ?>" alt="<?php echo $row['']; ?>">
+						<div class="caption">
+							<!-- Price -->
+							<h4 class="pull-right">£<?php echo $row['price']; ?></h4>
+							<!-- Name of product/Link to expanded product page -->
+							<h4><a href="#"><?php echo $row['name']; ?></a>
+							</h4>
+							<!-- Information snippet on the product -->
+							<p><?php echo $row['description']; ?></p>
+						</div>
+					</div>
 				</div>
-			</div>
-		</div>
+				<?php
+			}
+		?>
 	</div>
+	<!-- /.row -->
 
 </div>
 <!-- /.container -->

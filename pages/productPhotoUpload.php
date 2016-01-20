@@ -246,7 +246,7 @@ if (isset($_POST['addPhoto'])) {
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li>
-					<a href="products.php">Products</a>
+					<a href="productGallery.php">Products</a>
 				</li>
 				<li>
 					<a href="productUpload.php">Product Upload</a>
