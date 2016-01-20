@@ -99,11 +99,11 @@
 <div class="container loginMainContent">
 
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <h1>Delete My Profile</h1>
             <p class="lead">If you are sure you wish to delete your profile, please enter your email address and password to confirm this action and your profile will be deleted from our records.</p>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <h1>Sign In</h1>
             <!--<p class="lead">Upon successful log in you will be automatically redirected to the Products page.</p>-->
             <form method="post" action="deleteProfileResults.php">

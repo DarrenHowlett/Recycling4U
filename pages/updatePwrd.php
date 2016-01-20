@@ -11,65 +11,42 @@
     }
     // /. Open database connection
 
-    if (isset($_POST['updateProfile'])) {
+    if (isset($_POST['updatePwrd'])) {
 
         $email = $_POST['email'];
         $pwrd = $_POST['pwrd'];
 
-        $select = "SELECT * FROM `user` WHERE `email` LIKE BINARY '".$email."' AND `password` LIKE BINARY '".$pwrd."'";
+        $select = "SELECT `id`, `password` FROM `user` WHERE `email` LIKE BINARY '".$email."' AND `password` LIKE BINARY '".$pwrd."'";
         $result = $conn -> query($select) or die($conn.__LINE__);
 
         while ($row = $result -> fetch_assoc()) {
-        ?>
+            ?>
 
-        <div class="container">
-        <div class="row">
-        <div class="col-lg-12">
-            <h1>Update Profile</h1>
-            <p class="lead">Please use the form below to make any changes to the information we have on record for you.  To change your email address and password please fill in both the email/password and confrim email/password boxes.</p>
-        </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>Update Password</h1>
+                        <p class="lead">Please use the form below to update your password.</p>
+                    </div>
 
-        <div class="col-lg-12">
-            <form action="updateProfileConfirmation.php" method="post">
-                <fieldset>
-                    <input id="userID" name="userID" hidden="hidden" value="<?php echo $row['id']; ?>">
-                    <input id="oldEmail" name="oldEmail" hidden="hidden" value="<?php echo $email; ?>">
-                    <input id="oldPwrd" name="oldPwrd" hidden="hidden" value="<?php echo $pwrd; ?>">
-                    <label for="title">Title<br>
-                        <input id="title" name="title" type="text" value="<?php echo $row['title']; ?>">
-                    </label><br>
-                    <label for="forename">Forename<br>
-                        <input id="forename" name="forename" type="text" value="<?php echo $row['forename']; ?>">
-                    </label><br>
-                    <label for="surname">Surname<br>
-                        <input id="surname" name="surname" type="text" value="<?php echo $row['surname']; ?>">
-                    </label><br>
-                    <label for="firstLineAddress">1st Line Address<br>
-                        <input id="firstLineAddress" name="firstLineAddress" type="text" value="<?php echo $row['firstLineAddress']; ?>">
-                    </label><br>
-                    <label for="secondLineAddress">2nd Line Address<br>
-                        <input id="secondLineAddress" name="secondLineAddress" type="text" value="<?php echo $row['secondLineAddress']; ?>">
-                    </label><br>
-                    <label for="town">Town<br>
-                        <input id="town" name="town" type="text" value="<?php echo $row['town']; ?>">
-                    </label><br>
-                    <label for="county">County<br>
-                        <input id="county" name="county" type="text" value="<?php echo $row['county']; ?>">
-                    </label><br>
-                    <label for="postcode">Postcode<br>
-                        <input id="postcode" name="postcode" type="text" value="<?php echo $row['postcode']; ?>">
-                    </label><br>
-                    <label for="phone">Phone<br>
-                        <input id="phone" name="phone" type="tel" value="<?php echo $row['phone']; ?>">
-                    </label><br><br>
-                    <input id="submit" name="submit" type="submit" value="Update My Profile">
-                </fieldset>
-            </form>
+                    <div class="col-lg-12">
+                        <form action="updatePwrdConfirmation.php" method="post">
+                            <fieldset>
+                                <input id="userID" name="userID" hidden="hidden" value="<?php echo $row['id']; ?>">
+                                <label for="newPwrd">New Password<br>
+                                    <input id="newPwrd" name="newPwrd" type="password">
+                                </label><br>
+                                <label for="newPwrdConfirm">Confirm New Password<br>
+                                    <input id="newPwrdConfirm" name="newPwrdConfirm" type="password">
+                                </label><br><br>
+                                <input id="submit" name="submit" type="submit" value="Update My Password">
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-        </div>
-        </div>
-
-        <?php
+            <?php
 
         } // /. End of while
 

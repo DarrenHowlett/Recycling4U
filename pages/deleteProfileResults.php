@@ -247,14 +247,12 @@
 
                             $delete = "DELETE FROM `user` WHERE `id` = '".$userID."'";
 
-                            echo "DELETE query = ".$delete."<br>";
+                            $result = $conn -> query($delete) or die($conn.__LINE__);
 
-                            $deleteResult = $conn -> query($delete) or die($conn.__LINE__);
-
-                            if (!$deleteResult) {
-                                echo "<br>There was a problem deleting your profile, please try again later";
+                            if (!$result) {
+                                echo "<p class=\"lead\">There was a problem deleting your profile, please try again later</p>";
                             } else {
-                                echo "Your profile has been deleted from our records.  If you later wish to purchase anything from our site, you will ne to re-register.  We would like to take this opportunity to thank you for shopping with us and we hope to see you in the future.";
+                                echo "<p class=\"lead\">Your profile has been deleted from our records.  If you later wish to purchase anything from our site, you will ne to re-register.  We would like to take this opportunity to thank you for shopping with us and we hope to see you in the future.</p>";
                             }
 
                         } // /. End of DELETE
