@@ -19,6 +19,77 @@
 	}
 	// /. Open database connection
 
+	// PHP for form processing
+
+	// While this form will only be used by members of staff, it is still best practice to complete form checks.
+	// It is ALWAYS recommended to perform security checks on ALL user input whomever is entering the information.
+
+	if (isset($_POST['addProductConfirmation'])) {
+
+		$make 			= $_POST['make'];
+		$model 			= $_POST['model'];
+		$name 			= $_POST['name'];
+		$price 			= $_POST['price'];
+		$qtyAvailable 	= $_POST['qtyAvailable'];
+		$description 	= $_POST['description'];
+		$tags 			= $_POST['tags'];
+		$warrantyID 	= $_POST['warrantyID'];
+
+		$insert = "INSERT INTO `product`
+				   (`make`, `model`, `name`, `price`, `qtyAvailable`, `description`, `tags`, `warrantyID`)
+				   VALUES
+				   ('".$make."', '".$model."', '".$name."', '".$price."', '".$qtyAvailable."', '".$description."', '".$tags."', '".$warrantyID."')";
+
+		$result = $conn -> query($insert) or die($conn.__LINE__);
+
+		if (!$result) {
+			?>
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<p class="lead">
+							There was a problem entering the product details, please contact you system administrator to report the problem.
+						</p>
+					</div>
+				</div>
+			</div>
+			<?php
+		} else {
+
+			$select = "SELECT `id` FROM `product` WHERE
+		   	   		   `make` LIKE BINARY '".$make."' AND
+					   `model` LIKE BINARY '".$model."' AND
+					   `name` LIKE BINARY '".$name."' AND
+					   `price` LIKE BINARY '".$price."' AND
+					   `qtyAvailable` LIKE BINARY '".$qtyAvailable."' AND
+					   `description` LIKE BINARY '".$description."' AND
+					   `tags` LIKE BINARY '".$tags."' AND
+					   `warrantyID` LIKE BINARY '".$warrantyID."'";
+
+			$result = $conn -> query($select) or die($conn.__LINE__);
+
+			while ($row = $result -> fetch_assoc()) {
+				?>
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<p class="lead">
+								Your product was entered successfully, now you can add a photo.
+							</p>
+							<form action="productPhotoUpload.php" method="post">
+								<input id="productID" name="productID" type="text" hidden="hidden" readonly="readonly" value="<?php echo $row['id']; ?>">
+								<input id="addPhoto" name="addPhoto" type="submit">
+							</form>
+						</div>
+					</div>
+				</div>
+				<?php
+			} // /. End of while
+		}
+	} // /. End of if (isset($_POST['addProduct']))
+
+	// /. End of form processing
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,86 +176,6 @@
 
 <!-- Page Content -->
 <div class="container">
-
-	<div class="row">
-
-		<!-- Form to upload a new product to the database -->
-		<!-- The form is split in to two sections, product information and tags, this is so the form can be displayed
-			 in a way that on a desktop is not just one massive list of fields to be filled in.  On a mobile device
-			 the form would be one continuous list, but as the form would normally be used by a member of staff while
-			 on a desktop, this is a secondary issue -->
-		<!-- The id attribute of the form tag is needed for a textarea.  By having an id, the textarea can be placed
-			 anywhere on the web page but still be associated with the form even though it is outside of the form tags -->
-		<form action="productConfirmation.php" method="post" id="productUpload">
-			<div class="col-lg-6">
-				<h3>Product Information</h3>
-				<label for="make">Make<br>
-					<input id="make" name="make" type="text">
-				</label><br>
-				<label for="model">Model<br>
-					<input id="model" name="model" type="text">
-				</label><br>
-				<label for="name">Name<br>
-					<input id="name" name="name" type="text">
-				</label><br>
-				<!-- The price form entry is type="number". This allows for only numerical entry, because the min value is set
-					 to 0, only positive numbers are allowed, and because the step value is set to any, decimal numbers allowed,
-					 if this was not set, only whole numbers would be accepted. -->
-				<label for="price">Price<br>
-					<input id="price" name="price" type="number" min="0" step="0.01">
-				</label><br>
-				<!-- The qty form entry is also set to number input, but this time the step value is set to 1, this means
-					 that only whole numbers are accepted, increasing in value of 1 with each step i.e. 1, 2, 3 -->
-				<label for="qtyAvailable">Quantity<br>
-					<input id="qtyAvailable" name="qtyAvailable" type="number" min="0" step="1">
-				</label><br>
-				<!-- The description form entry is a text area where the user can enter a larger amount of text than a normal
-					 text input would allow.  It has a form attribute which dictates which form this textarea belongs to, this
-					 allows for the textarea to be placed somewhere else on the web page, but still being tied to a specific
-					 form.  Spellcheck is another feature of the textarea, this will as its name implies, spell check the input
-					 inside the textarea. -->
-				<label for="description">Description<br>
-					<textarea id="description" name="description" spellcheck="true" form="productUpload"></textarea>
-				</label><br>
-				<h4>Warranty</h4>
-				<input id="none" name="warrantyID" type="radio" value="1"> <label for="none">None</label><br>
-				<input id="three" name="warrantyID" type="radio" value="2"> <label for="three">3mths</label><br>
-				<input id="six" name="warrantyID" type="radio" value="3"> <label for="six">6mths</label><br>
-				<!-- Category is used for to determine which folder the photos of each product is uploaded to.
-				 	 Using PHP, the name that is placed in category will be appended to the file upload location,
-				 	 this will make it easier to locate files in the future, while also keeping each folder to a minimum
-				 	 amount of files, instead of having one folder for all photos -->
-			</div>
-			<div class="col-lg-6">
-				<h3>Tags</h3>
-				<input id="whiteGoods" name="tags[]" type="checkbox" value="White Goods"> <label for="whiteGoods">White Goods</label><br>
-
-				<input id="chestFreezer" name="tags[]" type="checkbox" value="Chest Freezer"> <label for="chestFreezer">Chest Freezer</label><br>
-				<input id="cooker" name="tags[]" type="checkbox" value="Cooker"> <label for="cooker">Cooker</label><br>
-				<input id="dishwasher" name="tags[]" type="checkbox" value="Dishwasher"> <label for="dishwasher">Dishwasher</label><br>
-				<input id="freezer" name="tags[]" type="checkbox" value="Freezer"> <label for="freezer">Freezer</label><br>
-				<input id="fridgeFreezer" name="tags[]" type="checkbox" value="Fridge Freezer"> <label for="fridgeFreezer">Fridge Freezer</label><br>
-				<input id="fridge" name="tags[]" type="checkbox" value="Fridge"> <label for="fridge">Fridge</label><br>
-				<input id="microwave" name="tags[]" type="checkbox" value="Microwave"> <label for="microwave">Microwave</label><br>
-				<input id="washingMachine" name="tags[]" type="checkbox" value="Washing Machine"> <label for="washingMachine">Washing Machine</label><br>
-
-				<input id="gardeningEquipment" name="tags[]" type="checkbox" value="Gardening Equipment"> <label for="gardeningEquipment">Gardening Equipment</label><br>
-
-				<input id="cultivator" name="tags[]" type="checkbox" value="Cultivator"> <label for="cultivator">Cultivator</label><br>
-				<input id="electricTool" name="tags[]" type="checkbox" value="Electric Tool"> <label for="electricTool">Electric Tool</label><br>
-				<input id="hedgeTrimmer" name="tags[]" type="checkbox" value="Hedge Trimmer"> <label for="hedgeTrimmer">Hedge Trimmer</label><br>
-				<input id="lawnMower" name="tags[]" type="checkbox" value="Lawn Mower"> <label for="lawnMower">Lawn Mower</label><br>
-				<input id="manualTools" name="tags[]" type="checkbox" value="Manual Tools"> <label for="manualTools">Manual Tools</label><br>
-				<input id="rideOnMower" name="tags[]" type="checkbox" value="Ride On Mower"> <label for="rideOnMower">Ride On Mower</label><br>
-				<input id="strimmer" name="tags[]" type="checkbox" value="Strimmer"> <label for="strimmer">Strimmer</label><br>
-			</div>
-			<div class="col-lg-12">
-				<br><input id="addProduct" name="addProduct" type="submit" value="Add Photo">
-			</div>
-		</form>
-		<!-- /. Form -->
-
-	</div>
 
 </div>
 <!-- /.container -->

@@ -24,105 +24,173 @@ if (mysqli_connect_errno()) {
 
 // While this form will only be used by members of staff, it is still best practice to complete form checks.
 // It is ALWAYS recommended to perform security checks on ALL user input whomever is entering the information.
-
-if (isset($_POST['addProduct'])) {
+if (isset($_POST['addPhoto'])) {
 
 	/* --------------------------------------------
      * Variables From User Input
     -------------------------------------------- */
 
-	$make 			= $_POST['make'];
-	$model 			= $_POST['model'];
-	$name 			= $_POST['name'];
-	$price 			= $_POST['price'];
-	$qtyAvailable 	= $_POST['qtyAvailable'];
-	$description 	= $_POST['description'];
-	$tags 			= $_POST['tags']; // Returns the value of the checkbox, not what is displayed to the user. This is then
-	// Placed in to an array as the name of the checkboxes in the tag list  is tags[]
-	$warrantyID 	= $_POST['warrantyID']; // Returns the value of the radio button, not what is displayed to the user
+	$productID = $_POST['productID'];
 
-	$tags = implode(", ", $_POST['tags']); // By imploding the contents of the array, this turns
-	// the array data into string data which is then used
-	// to insert in to the database
+	$select = "SELECT `id` FROM `product` WHERE `id` LIKE BINARY '" . $productID . "'";
 
-	// SQL INJECTION COUNTERMEASURES
-	// This only has to apply to fields that allow users to type string data in, fields that
-	// have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
-	// The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
-	// will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
+	$result = $conn->query($select) or die($conn . __LINE__);
 
-	// Escape any special characters, for example O'Conner becomes O\'Conner
-	// The first parameter of mysqli_real_escape_string is the database connection to open,
-	// The second parameter is the string to have the special characters escaped.
-	$make = mysqli_real_escape_string($conn, $make);
-	$model = mysqli_real_escape_string($conn, $model);
-	$name = mysqli_real_escape_string($conn, $name);
-	$description = mysqli_real_escape_string($conn, $description);
+	while ($row = $result->fetch_assoc()) {
+		?>
+		<div class="container">
 
-	// Trim any whitespace from the beginning and end of the user input
-	$make = trim($make);
-	$model = trim($model);
-	$name = trim($name);
-	$description = trim($description);
+			<div class="row">
 
-	// Remove any HTML & PHP tags that may have been injected in to the input
-	$make = strip_tags($make);
-	$model = strip_tags($model);
-	$name = strip_tags($name);
-	$description = strip_tags($description);
+				<!-- Add Product Photo Form -->
+				<form action="" method="post" enctype="multipart/form-data">
+					<input id="productID" name="productID" type="text" readonly="readonly" value="<?php echo $row['id']; ?>">
+					<div class="col-lg-12">
+						<h3>Product Photo Information</h3>
+						<h4>Photo To Upload</h4>
+						<input type="hidden" name="MAX_FILE_SIZE" value="2000000">
+						<input name="userfile" type="file" id="userfile">
+						<h4>File Name</h4>
+						<label for="productPhotoName">
+							<input id="productPhotoName" name="productPhotoName" type="text">
+						</label><br>
+						<h4>Directory To Upload To</h4>
+						<label for="folderName">Folder Name<br>
+							<select id="folderName" name="folderName">
+								<option value="chestFreezer">Chest Freezer</option>
+								<option value="cooker">Cooker</option>
+								<option value="dishwasher">Dishwasher</option>
+								<option value="freezer">Freezer</option>
+								<option value="fridgeFreezer">Fridge Freezer</option>
+								<option value="fridge">Fridge</option>
+								<option value="microwave">Microwave</option>
+								<option value="washingMachine">Washing Machine</option>
+								<option value="cultivator">Cultivator</option>
+								<option value="elctricTool">Electric Tool</option>
+								<option value="hedgeTrimmer">Hedge Trimmer</option>
+								<option value="lawnMower">Lawn Mower</option>
+								<option value="manualTool">Manual Tool</option>
+								<option value="rideOnMower">Ride On Mower</option>
+								<option value="strimmer">Strimmer</option>
+							</select>
+						</label><br><br>
+					</div>
+					<div class="col-lg-12">
+						<input id="submit" name="submit" type="submit" value="Submit Product">
+					</div>
+				</form>
+				<!-- /. Form -->
 
-	// Convert any tags that may have slipped through in to string data,
-	// for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
-	$make = htmlentities($make);
-	$model = htmlentities($model);
-	$name = htmlentities($name);
-	$description = htmlentities($description);
+			</div>
 
-	/* --------------------------------------------
-     * Form Checks
-    -------------------------------------------- */
+		</div>
+		<?php
+	}  // /. End of while
 
-	// Check ALL form entries have been filled in
-	if (empty($make) || empty($model) || empty($name) || empty($price) || empty($qtyAvailable) || empty($description) || empty($tags) || empty($warrantyID)) {
-		echo "ALL Fields must be completed";
-	} else {
+} // /. End of if (isset($_POST['addPhoto']))
 
-		// Put a SQL query in to a variable
-		$insert = "INSERT INTO `product`
-							   (`make`, `model`, `name`, `price`, `qtyAvailable`, `description`, `tags`, `warrantyID`)
-							   VALUES
-							   ('".$make."', '".$model."', '".$name."', '".$price."', '".$qtyAvailable."', '".$description."', '".$tags."', '".$warrantyID."')";
+	if (isset($_POST['submit'])) {
+		/* --------------------------------------------
+		 * Variables From File Information
+		-------------------------------------------- */
 
-		// Perform the SQL query
-		$insertResult = $conn -> query($insert) or die($conn.__LINE__);
+		$productID 			= $_POST['productID'];
+		$fileName 			= $_FILES['userfile']['name'];
+		$tmpName 			= $_FILES['userfile']['tmp_name'];
+		$fileSize 			= $_FILES['userfile']['size'];
+		$fileType 			= $_FILES['userfile']['type'];
+		$productPhotoName 	= $_POST['productPhotoName'];
+		$folderName 		= $_POST['folderName']; // Returns the value of the dropdown option, not what is
+		// displayed to the user
 
-	} // /. End of query
+		// This determines where the file is to be uploaded
+		$uploadDir = '../pics/products/'.$folderName.'/';
 
-	$select = "SELECT `id` FROM `product` WHERE
-		   `make` LIKE BINARY '".$make."' AND
-		   `model` LIKE BINARY '".$model."' AND
-		   `name` LIKE BINARY '".$name."' AND
-		   `price` LIKE BINARY '".$price."' AND
-		   `qtyAvailable` LIKE BINARY '".$qtyAvailable."' AND
-		   `description` LIKE BINARY '".$description."' AND
-		   `tags` LIKE BINARY '".$tags."' AND
-		   `warrantyID` LIKE BINARY '".$warrantyID."'";
+		// This variable takes the path of the directory to which the file is to be uploaded to
+		// and appends the file name to that directory, this is what is uploaded to the database,
+		// the file itself will be uploaded and stored wherever the path pointed to.
+		$filePath = $uploadDir . $fileName;
 
-	$selectResult = $conn -> query($select) or die($conn.__LINE__);
+		$fileName = addslashes($fileName);
+		$filePath = addslashes($filePath);
 
-	while ($row = $selectResult -> fetch_assoc()) {
-		$productID = $row['id'];
+		$result = move_uploaded_file($tmpName, $filePath);
+		if (!$result) {
+			echo "Error uploading file";
+			exit;
+		}
 
-	} // /. End Of ProductID While
+		/* --------------------------------------------
+		 * User Input From Form Validation
+		-------------------------------------------- */
 
-} // /. End of if (isset($_POST['submit']))
+		// SQL INJECTION COUNTERMEASURES
+		// This only has to apply to fields that allow users to type string data in, fields that
+		// have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
+		// The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
+		// will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
 
+		// Escape any special characters, for example O'Conner becomes O\'Conner
+		// The first parameter of mysqli_real_escape_string is the database connection to open,
+		// The second parameter is the string to have the special characters escaped.
+		$productPhotoName = mysqli_real_escape_string($conn, $productPhotoName);
 
-// /.PHP for form processing
+		// Trim any whitespace from the beginning and end of the user input
+		$productPhotoName = trim($productPhotoName);
+
+		// Remove any HTML & PHP tags that may have been injected in to the input
+		$productPhotoName = strip_tags($productPhotoName);
+
+		// Convert any tags that may have slipped through in to string data,
+		// for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
+		$productPhotoName = htmlentities($productPhotoName);
+
+		/* --------------------------------------------
+		 * Form Checks
+		-------------------------------------------- */
+
+		// Check ALL form entries have been filled in
+		if (empty($productPhotoName)) {
+			echo "ALL Fields must be completed";
+		} else {
+
+			// Put a SQL query in to a variable
+			$insert = "INSERT INTO `productPhoto`
+					   (`fileName`, `fileType`, `fileSize`, `fileLocation`, `productPhotoName`, `masterPhoto`, `productID`)
+					   VALUES
+					   ('".$fileName."', '".$fileType."', '".$fileSize."', '".$filePath."', '".$productPhotoName."', 1, $productID)";
+
+			// Perform the SQL query
+			$result = $conn -> query($insert) or die($conn.__LINE__);
+
+			if (!$result) {
+				?>
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<p class="lead">There was an error uploading your file, please contact your system adminsitrator.</p>
+						</div>
+					</div>
+				</div>
+				<?php
+			} else {
+				?>
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<p class="lead">Your product has been uploaded.</p>
+							<a href="productUpload.php">Add another product.</a>
+						</div>
+					</div>
+				</div>
+				<?php
+			}
+
+		} // /. End of query
+
+	} // /. End of if (isset($_POST['submit']))
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -209,143 +277,6 @@ if (isset($_POST['addProduct'])) {
 <!-- Page Content -->
 <div class="container">
 
-	<div class="row">
-
-		<!-- Add Product Photo Form -->
-		<form action="" method="post" id="productUpload" enctype="multipart/form-data">
-			<div class="col-lg-12">
-				<h3>Product Photo Information</h3>
-				<h4>Photo To Upload</h4>
-				<input type="hidden" name="MAX_FILE_SIZE" value="2000000">
-				<input name="userfile" type="file" id="userfile">
-				<h4>File Name</h4>
-				<label for="productPhotoName">
-					<input id="productPhotoName" name="productPhotoName" type="text">
-				</label><br>
-				<h4>Directory To Upload To</h4>
-				<label for="folderName">Folder Name<br>
-					<select id="folderName" name="folderName">
-						<option value="chestFreezer">Chest Freezer</option>
-						<option value="cooker">Cooker</option>
-						<option value="dishwasher">Dishwasher</option>
-						<option value="freezer">Freezer</option>
-						<option value="fridgeFreezer">Fridge Freezer</option>
-						<option value="fridge">Fridge</option>
-						<option value="microwave">Microwave</option>
-						<option value="washingMachine">Washing Machine</option>
-						<option value="cultivator">Cultivator</option>
-						<option value="elctricTool">Electric Tool</option>
-						<option value="hedgeTrimmer">Hedge Trimmer</option>
-						<option value="lawnMower">Lawn Mower</option>
-						<option value="manualTool">Manual Tool</option>
-						<option value="rideOnMower">Ride On Mower</option>
-						<option value="strimmer">Strimmer</option>
-					</select>
-				</label><br><br>
-			</div>
-			<div class="col-lg-12">
-				<input id="submit" name="submit" type="submit" value="Submit Product">
-			</div>
-		</form>
-		<!-- /. Form -->
-
-	</div>
-	<?php
-
-	echo $insert;
-
-	// PHP for form processing
-
-	// While this form will only be used by members of staff, it is still best practice to complete form checks.
-	// It is ALWAYS recommended to perform security checks on ALL user input whomever is entering the information.
-
-	if (isset($_POST['submit'])) {
-
-		/* --------------------------------------------
-         * Variables From File Information
-        -------------------------------------------- */
-
-		$fileName 			= $_FILES['userfile']['name'];
-		$tmpName 			= $_FILES['userfile']['tmp_name'];
-		$fileSize 			= $_FILES['userfile']['size'];
-		$fileType 			= $_FILES['userfile']['type'];
-		$productPhotoName 	= $_POST['productPhotoName'];
-		$folderName 		= $_POST['folderName']; // Returns the value of the dropdown option, not what is
-		// displayed to the user
-
-		// This determines where the file is to be uploaded
-		$uploadDir = '../pics/products/'.$folderName.'/';
-
-		$fileName = addslashes($fileName);
-		$filePath = addslashes($filePath);
-
-		// This variable takes the path of the directory to which the file is to be uploaded to
-		// and appends the file name to that directory, this is what is uploaded to the database,
-		// the file itself will be uploaded and stored wherever the path pointed to.
-		$filePath = $uploadDir . $fileName;
-
-		/* --------------------------------------------
-         * User Input From Form Validation
-        -------------------------------------------- */
-
-		// SQL INJECTION COUNTERMEASURES
-		// This only has to apply to fields that allow users to type string data in, fields that
-		// have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
-		// The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
-		// will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
-
-		// Escape any special characters, for example O'Conner becomes O\'Conner
-		// The first parameter of mysqli_real_escape_string is the database connection to open,
-		// The second parameter is the string to have the special characters escaped.
-		$productPhotoName = mysqli_real_escape_string($conn, $productPhotoName);
-
-		// Trim any whitespace from the beginning and end of the user input
-		$productPhotoName = trim($productPhotoName);
-
-		// Remove any HTML & PHP tags that may have been injected in to the input
-		$productPhotoName = strip_tags($productPhotoName);
-
-		// Convert any tags that may have slipped through in to string data,
-		// for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
-		$productPhotoName = htmlentities($productPhotoName);
-
-		/* --------------------------------------------
-         * Form Checks
-        -------------------------------------------- */
-
-		// Check ALL form entries have been filled in
-		if (empty($productPhotoName)) {
-			echo "ALL Fields must be completed";
-		} else {
-
-			$result = move_uploaded_file($tmpName, $filePath);
-			if (!$result) {
-				echo "Error uploading file";
-				exit;
-			} else {
-
-				// Put a SQL query in to a variable
-				$insert = "INSERT INTO `productPhoto`
-						   (`fileName`, `fileType`, `fileSize`, `fileLocation`, `productPhotoName`, `masterPhoto`, `productID`)
-						   VALUES
-						   ('".$fileName."', '".$fileType."', '".$fileSize."', '".$filePath."', '".$productPhotoName."', '1', '".$productID."')";
-
-				// Perform the SQL query
-				$result = $conn -> query($insert) or die($conn.__LINE__);
-
-				echo "Product ID Is = ".$productID."<br>";
-				echo "Insert = ".$insert."<br>";
-
-
-			} // /. End of move_uploaded_file error
-
-		} // /. End of query
-
-	} // /. End of if (isset($_POST['submit']))
-
-	// /.PHP for form processing
-
-	?>
 </div>
 <!-- /.container -->
 
