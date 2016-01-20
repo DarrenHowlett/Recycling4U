@@ -3,9 +3,9 @@ Code For My FdSc Web Based Database Module
 
 This web site is being built as part of my 2nd year FdSc in Computing.  All the code has to be my own, and it has to prove that I can create a web site with an attached database.  The web site is to access the database and show at least one of each of the following queries:
 
-SELECT
-INSERT
-UPDATE
+SELECT - 
+INSERT - 
+UPDATE - 
 DELETE
 
 Obviously the more functionality I can put in to the web site, the better the mark I could possibly get.
