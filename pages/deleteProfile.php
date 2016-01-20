@@ -1,3 +1,17 @@
+<?php
+
+    // Include/Required files
+    require_once ('../admin/config/registeredUser.php');
+
+    // Open database connection
+    $conn = new mysqli($host, $user, $pass, $dbase);
+    if (mysqli_connect_errno()) {
+        printf("Database connection failed due to: %s\n", mysqli_connect_error());
+        exit();
+    }
+    // /. Open database connection
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -86,20 +100,20 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h1>Register</h1>
-            <p class="lead">If you have not already registered with us, you will not be able to buy any goods until you have done so.  Please <a href="register.php">go to the register page</a> to register your details.</p>
+            <h1>Delete My Profile</h1>
+            <p class="lead">If you are sure you wish to delete your profile, please enter your email address and password to confirm this action and your profile will be deleted from our records.</p>
         </div>
         <div class="col-lg-6">
-            <h1>Log In</h1>
+            <h1>Sign In</h1>
             <!--<p class="lead">Upon successful log in you will be automatically redirected to the Products page.</p>-->
-            <form method="post" action="loginResult.php">
+            <form method="post" action="deleteProfileResults.php">
                 <label for="email">Email:<br>
                     <input id="email" name="email" type="email" required="required">
                 </label><br>
                 <label for="pwrd">Password:<br>
                     <input id="pwrd" name="pwrd" type="password" required="required">
                 </label><br>
-                <input id="submit" name="submit" type="submit">
+                <input id="submit" name="submit" type="submit" value="Delete My Profile!">
             </form>
         </div>
     </div>
@@ -187,3 +201,6 @@
 </body>
 
 </html>
+<?php
+    mysqli_close($conn);
+?>

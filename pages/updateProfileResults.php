@@ -1,3 +1,68 @@
+<?php
+
+    // Include/Required files
+    require_once ('../admin/config/registeredUser.php');
+
+    // Open database connection
+    $conn = new mysqli($host, $user, $pass, $dbase);
+    if (mysqli_connect_errno()) {
+        printf("Database connection failed due to: %s\n", mysqli_connect_error());
+        exit();
+    }
+    // /. Open database connection
+
+    if (isset($_POST['submitConfirmation'])) {
+
+        $userID = $_POST['userID'];
+        $title 				= $_POST['title'];
+        $forename 			= $_POST['forename'];
+        $surname 			= $_POST['surname'];
+        $firstLineAddress 	= $_POST['firstLineAddress'];
+        $secondLineAddress 	= $_POST['secondLineAddress'];
+        $town 				= $_POST['town'];
+        $county 			= $_POST['county'];
+        $postcode 			= $_POST['postcode'];
+        $phone 				= $_POST['phone'];
+
+        $update = "UPDATE `user` SET
+                   `title` = '".$title."',
+                   `forename` = '".$forename."',
+                   `surname` = '".$surname."',
+                   `firstLineAddress` = '".$firstLineAddress."',
+                   `secondLineAddress` = '".$secondLineAddress."',
+                   `town` = '".$town."',
+                   `county` = '".$county."',
+                   `postcode` = '".$postcode."',
+                   `phone` = '".$phone."'
+                   WHERE `user`.`id` = $userID";
+
+        $result = $conn -> query($update) or die($conn.__LINE__);
+
+        if (!$result) {
+            ?>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p class="lead">There was a problem updating your profile, please try again later.</p>
+                    </div>
+                </div>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p class="lead">Your profile has been updated successfully.</p>
+                    </div>
+                </div>
+            </div>
+            <?php
+        }
+
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,28 +149,8 @@
 <!-- Page Content -->
 <div class="container loginMainContent">
 
-    <div class="row">
-        <div class="col-lg-6">
-            <h1>Register</h1>
-            <p class="lead">If you have not already registered with us, you will not be able to buy any goods until you have done so.  Please <a href="register.php">go to the register page</a> to register your details.</p>
-        </div>
-        <div class="col-lg-6">
-            <h1>Log In</h1>
-            <!--<p class="lead">Upon successful log in you will be automatically redirected to the Products page.</p>-->
-            <form method="post" action="loginResult.php">
-                <label for="email">Email:<br>
-                    <input id="email" name="email" type="email" required="required">
-                </label><br>
-                <label for="pwrd">Password:<br>
-                    <input id="pwrd" name="pwrd" type="password" required="required">
-                </label><br>
-                <input id="submit" name="submit" type="submit">
-            </form>
-        </div>
-    </div>
-    <!-- /.row -->
-
 </div>
+
 <!-- /.container -->
 
 <div class="container">
@@ -187,3 +232,6 @@
 </body>
 
 </html>
+<?php
+    mysqli_close($conn);
+?>
