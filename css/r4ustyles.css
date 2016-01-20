@@ -36,9 +36,9 @@
  ---------------------------------------- */
 
     /* -------------------------------------
-     * Contact Us Page Specific
+     * Generic List Styles
      ------------------------------------ */
-    .contactDetails li {
+    .bulletNone li {
         list-style-type: none; /* Remove any list item bullet points */
     }
 
