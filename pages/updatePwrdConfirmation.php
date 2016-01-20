@@ -14,8 +14,8 @@
     if (isset($_POST['submit'])) {
 
         $userID         = $_POST['userID'];
-        $email          = $_POST['newEmail'];
-        $emailConfirm   = $_POST['newEmailConfirm'];
+        $pwrd           = $_POST['newPwrd'];
+        $pwrdConfirm    = $_POST['newPwrdConfirm'];
 
         /* --------------------------------------------
 		 * User Input From Form Validation
@@ -31,26 +31,26 @@
         // The first parameter of mysqli_real_escape_string is the database connection to open,
         // The second parameter is the string to have the special characters escaped.
 
-        $email = mysqli_real_escape_string($conn, $email);
-        $emailConfirm = mysqli_real_escape_string($conn, $emailConfirm);
+        $pwrd = mysqli_real_escape_string($conn, $pwrd);
+        $pwrdConfirm = mysqli_real_escape_string($conn, $pwrdConfirm);
 
         // Trim any whitespace from the beginning and end of the user input
 
-        $email = trim($email);
-        $emailConfirm = trim($emailConfirm);
+        $pwrd = trim($pwrd);
+        $pwrdConfirm = trim($pwrdConfirm);
 
         // Remove any HTML & PHP tags that may have been injected in to the input
 
-        $email = strip_tags($email);
-        $emailConfirm = strip_tags($emailConfirm);
+        $pwrd = strip_tags($pwrd);
+        $pwrdConfirm = strip_tags($pwrdConfirm);
 
         // Convert any tags that may have slipped through in to string data,
         // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
 
-        $email = htmlentities($email);
-        $emailConfirm = htmlentities($emailConfirm);
+        $pwrd = htmlentities($pwrd);
+        $pwrdConfirm = htmlentities($pwrdConfirm);
 
-        if (empty($email) || empty($emailConfirm)) {
+        if (empty($pwrd) || empty($pwrdConfirm)) {
             ?>
             <div class="container">
                 <div class="row">
@@ -64,12 +64,12 @@
         } else {
 
             // Check email and emailComfirm match
-            if ($email != $emailConfirm) {
+            if ($pwrd != $pwrdConfirm) {
                 ?>
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
-                            <p class="lead">The emails entered DO NOT match, please try again</p>
+                            <p class="lead">The passwords entered DO NOT match, please try again</p>
                             <a href="profile.php">Back to profile page.</a>
                         </div>
                     </div>
@@ -80,11 +80,11 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
-                            <form action="updateEmailResults.php" method="post">
+                            <form action="updatePwrdResults.php" method="post">
                                 <fieldset>
-                                    <input id="userID" name="userID" type="text" value="<?php echo $userID; ?>" hidden="hidden">
-                                    <label for="newEmail">New Email<br>
-                                        <input id="newEmail" name="newEmail" type="text" value="<?php echo $email; ?>" readonly="readonly">
+                                    <input id="userID" name="userID" type="text" value="<?php echo $userID; ?>">
+                                    <label for="newPwrd">New Password<br>
+                                        <input id="newPwrd" name="newPwrd" type="password" value="<?php echo $pwrd; ?>" readonly="readonly">
                                     </label><br><br>
                                     <p>If these details are correct, click the update my email button, if they are not
                                         correct, please <a href="profile.php">go back to and make the necessary

@@ -16,37 +16,37 @@
         $email = $_POST['email'];
         $pwrd = $_POST['pwrd'];
 
-        $select = "SELECT * FROM `user` WHERE `email` LIKE BINARY '".$email."' AND `password` LIKE BINARY '".$pwrd."'";
+        $select = "SELECT `id`, `email` FROM `user` WHERE `email` LIKE BINARY '".$email."' AND `password` LIKE BINARY '".$pwrd."'";
         $result = $conn -> query($select) or die($conn.__LINE__);
 
         while ($row = $result -> fetch_assoc()) {
-        ?>
+            ?>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Update Email</h1>
-                    <p class="lead">Please use the form below to update your email address.</p>
-                </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>Update Email</h1>
+                        <p class="lead">Please use the form below to update your email address.</p>
+                    </div>
 
-                <div class="col-lg-12">
-                    <form action="updateEmailConfirmation.php" method="post">
-                        <fieldset>
-                            <input id="userID" name="userID" hidden="hidden" value="<?php echo $row['id']; ?>">
-                            <label for="newEmail">New Email<br>
-                                <input id="newEmail" name="newEmail" type="text">
-                            </label><br>
-                            <label for="confirmNewEmail">Confirm New Email<br>
-                                <input id="confirmNewEmail" name="confirmNewEmail" type="text">
-                            </label><br><br>
-                            <input id="submit" name="submit" type="submit" value="Update My Email">
-                        </fieldset>
-                    </form>
+                    <div class="col-lg-12">
+                        <form action="updateEmailConfirmation.php" method="post">
+                            <fieldset>
+                                <input id="userID" name="userID" hidden="hidden" value="<?php echo $row['id']; ?>">
+                                <label for="newEmail">New Email<br>
+                                    <input id="newEmail" name="newEmail" type="text">
+                                </label><br>
+                                <label for="newEmailConfirm">Confirm New Email<br>
+                                    <input id="newEmailConfirm" name="newEmailConfirm" type="text">
+                                </label><br><br>
+                                <input id="submit" name="submit" type="submit" value="Update My Email">
+                            </fieldset>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <?php
+            <?php
 
         } // /. End of while
 

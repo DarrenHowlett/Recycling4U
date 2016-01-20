@@ -256,13 +256,58 @@
                         while ($row = $result -> fetch_assoc()) {
                             ?>
                             <h2>Your Profile:</h2>
-                            <ul>
-                                <li>Name: <?php echo $row['title']." ".$row['forename']." ".$row['surname']; ?></li>
-                                <li>Address:<br><?php echo $row['firstLineAddress']."<br>".$row['secondLineAddress']."<br>".$row['town']."<br>".$row['county']."<br>".$row['postcode']; ?></li>
-                                <li>Phone: <?php echo $row['phone']; ?></li>
-                                <li>Email: <?php echo $row['email']; ?></li>
-                                <li>Password: <?php echo $row['password']; ?></li>
-                            </ul>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th class="profileTH">Our Records Show</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Title</td>
+                                        <td class="profileTD"><?php echo $row['title']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Forename</td>
+                                        <td class="profileTD"><?php echo $row['forename']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Surname</td>
+                                        <td class="profileTD"><?php echo $row['surname']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>First Line Address</td>
+                                        <td class="profileTD"><?php echo $row['firstLineAddress']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Second Line Address</td>
+                                        <td class="profileTD"><?php echo $row['secondLineAddress']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Town</td>
+                                        <td class="profileTD"><?php echo $row['town']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>County</td>
+                                        <td class="profileTD"><?php echo $row['county']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Postcode</td>
+                                        <td class="profileTD"><?php echo $row['postcode']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Phone</td>
+                                        <td class="profileTD"><?php echo $row['phone']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td class="profileTD"><?php echo $row['email']; ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br>
+                            <p class="lead">If you would like to change/delete any of your details, please select from the following options:</p>
                             <form action="updateProfile.php" method="post">
                                 <input type="text" hidden="hidden" id="email" name="email" value="<?php echo $row['email']; ?>">
                                 <input type="text" hidden="hidden" id="pwrd" name="pwrd" value="<?php echo $row['password']; ?>">

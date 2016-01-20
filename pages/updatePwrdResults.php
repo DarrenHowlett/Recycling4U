@@ -11,96 +11,42 @@
     }
     // /. Open database connection
 
-    if (isset($_POST['submit'])) {
+    if (isset($_POST['submitConfirmation'])) {
 
-        $userID         = $_POST['userID'];
-        $email          = $_POST['newEmail'];
-        $emailConfirm   = $_POST['newEmailConfirm'];
+        $userID     = $_POST['userID'];
+        $pwrd       = $_POST['newPwrd'];
 
-        /* --------------------------------------------
-		 * User Input From Form Validation
-		-------------------------------------------- */
+        // Hash the password that is to be entered in to the database
+        $pwrd = password_hash($pwrd, PASSWORD_DEFAULT);
 
-        // SQL INJECTION COUNTERMEASURES
-        // This only has to apply to fields that allow users to type string data in, fields that
-        // have dropdown boxes, checkboxes, radio buttons etc or are restricted to number input need not be put through sanitation.
-        // The reason inputs restricted to number input do not have to be put through sanitation is, even though the input
-        // will allow for text to be entered in to the input box, any text that is entered will not actually be returned.
+        $update = "UPDATE `user` SET `password` = '".$pwrd."' WHERE `id` = $userID";
 
-        // Escape any special characters, for example O'Conner becomes O\'Conner
-        // The first parameter of mysqli_real_escape_string is the database connection to open,
-        // The second parameter is the string to have the special characters escaped.
+        $result = $conn -> query($update) or die($conn.__LINE__);
 
-        $email = mysqli_real_escape_string($conn, $email);
-        $emailConfirm = mysqli_real_escape_string($conn, $emailConfirm);
-
-        // Trim any whitespace from the beginning and end of the user input
-
-        $email = trim($email);
-        $emailConfirm = trim($emailConfirm);
-
-        // Remove any HTML & PHP tags that may have been injected in to the input
-
-        $email = strip_tags($email);
-        $emailConfirm = strip_tags($emailConfirm);
-
-        // Convert any tags that may have slipped through in to string data,
-        // for example <b>Darren</b> becomes &lt;b&gt;Darren&lt;/b&gt;
-
-        $email = htmlentities($email);
-        $emailConfirm = htmlentities($emailConfirm);
-
-        if (empty($email) || empty($emailConfirm)) {
+        if (!$result) {
             ?>
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <p class="lead">ALL fields must be filled in.</p>
-                        <a href="profile.php">Back to profile page.</a>
+                        <p class="lead">There was a problem updating your password, please try again later.</p>
                     </div>
                 </div>
             </div>
             <?php
         } else {
-
-            // Check email and emailComfirm match
-            if ($email != $emailConfirm) {
-                ?>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <p class="lead">The emails entered DO NOT match, please try again</p>
-                            <a href="profile.php">Back to profile page.</a>
-                        </div>
+            ?>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p class="lead">Your password has been updated successfully.</p>
                     </div>
                 </div>
-                <?php
-            } else {
-                ?>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <form action="updateEmailResults.php" method="post">
-                                <fieldset>
-                                    <input id="userID" name="userID" type="text" value="<?php echo $userID; ?>" hidden="hidden">
-                                    <label for="newEmail">New Email<br>
-                                        <input id="newEmail" name="newEmail" type="text" value="<?php echo $email; ?>" readonly="readonly">
-                                    </label><br><br>
-                                    <p>If these details are correct, click the update my email button, if they are not
-                                        correct, please <a href="profile.php">go back to and make the necessary
-                                            changes.</a></p>
-                                    <input id="submitConfirmation" name="submitConfirmation" type="submit" value="Update My Email">
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <?php
-            } // /. End of emails DO NOT match
+            </div>
+            <?php
+        } // /. End of update email
 
-        } // /. End of empty fields
+    } // /. End of if (isset($_POST['submitConfirmation']))
 
-    } // /. End of if (isset($_POST['updateProfile']))
 ?>
 <!DOCTYPE html>
 <html lang="en">
